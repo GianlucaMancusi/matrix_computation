@@ -1,4 +1,3 @@
-// Gianluca Mancusi - Laplace's formula calculator
 // main.c Example of usage
 #include "matrixcomp.h"
 int main(void)

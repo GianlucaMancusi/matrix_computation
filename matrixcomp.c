@@ -1,5 +1,4 @@
 // Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi - Unimore
-
 #include "matrixcomp.h"
 
 double laplace(double *matr, int dim)
