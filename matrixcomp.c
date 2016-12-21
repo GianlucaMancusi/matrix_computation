@@ -37,6 +37,35 @@ double* compMinor(double *matr, int matr_rows, int matr_cols, int row, int col)
 	return n_matr;
 }
 
+
+struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
+{
+	size_t r, c, z, lcols = lhs->cols, rcols = rhs->cols;
+	struct matrix *ris = malloc(sizeof(struct matrix));
+	double somma;
+
+	if (lhs->cols != rhs->rows || lhs == NULL || rhs == NULL) return NULL;
+
+	ris->rows = lhs->rows;
+	ris->cols = rhs->cols;
+	ris->data = malloc(lhs->rows * rhs->cols * sizeof(double));
+
+	for (r = 0; r < ris->rows; r++)
+	{
+		for (c = 0; c < ris->rows; c++)
+		{
+			somma = 0;
+			for (z = 0; z < rcols; z++)
+			{
+				somma += lhs->data[lcols * r + z] * rhs->data[rcols * z + c];
+			}
+			ris->data[ris->cols * r + c] = somma;
+		}
+	}
+
+	return ris;
+}
+
 double det3x3(double *matr)
 {
 	if (matr == NULL) return 0;
