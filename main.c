@@ -15,7 +15,7 @@ int main(void)
 		p[6] = 1;
 		p[7] = 2;
 		p[8] = 1;
-		double ris = det3x3(p);
+		double ris = det(p,3);
 		free(p);
 	}
 
@@ -27,7 +27,7 @@ int main(void)
 		p2[1] = 2;
 		p2[2] = 3;
 		p2[3] = 1;
-		double ris2 = laplace(p2, 2);
+		double ris2 = det(p2, 2);
 		free(p2);
 	}
 
@@ -36,7 +36,7 @@ int main(void)
 	if (p3)
 	{
 		p3[0] = 4;
-		double ris3 = laplace(p3, 1);
+		double ris3 = det(p3, 1);
 		free(p3);
 	}
 
@@ -53,7 +53,7 @@ int main(void)
 		p4[6] = 1;
 		p4[7] = 2;
 		p4[8] = 1;
-		double ris4 = laplace(p4, 3);
+		double ris4 = det(p4, 3);
 		free(p4);
 	}
 
@@ -77,7 +77,7 @@ int main(void)
 		p5[13] = 1;
 		p5[14] = 1;
 		p5[15] = 1;
-		double ris5 = laplace(p5, 4);
+		double ris5 = det(p5, 4);
 		free(p5);
 	}
 
@@ -110,7 +110,7 @@ int main(void)
 		p6[22] = 0;
 		p6[23] = 1;
 		p6[24] = 0;
-		double ris6 = laplace(p6, 5);
+		double ris6 = det(p6, 5);
 		free(p6);
 	}
 	return 0;
