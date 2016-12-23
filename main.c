@@ -1,4 +1,3 @@
-// main.c ExamPLe of usage
 #include "matrixcomp.h"
 int main(void)
 {
