@@ -1,117 +1,151 @@
-// main.c Example of usage
+// main.c ExamPLe of usage
 #include "matrixcomp.h"
 int main(void)
 {
-	//EXAMPLE
-	double *p = (double*)malloc(9 * sizeof(double));
-	if (p)
+	//EXAMPLES
+	//LAPLACE 3x3
+	struct matrix *m = creatematrix(3, 3);
+	if (m)
 	{
-		p[0] = 1;
-		p[1] = 2;
-		p[2] = 3;
-		p[3] = 1;
-		p[4] = 1;
-		p[5] = 1;
-		p[6] = 1;
-		p[7] = 2;
-		p[8] = 1;
-		double ris = det(p,3);
-		free(p);
+		m->data[0] = 1;
+		m->data[1] = 2;
+		m->data[2] = 3;
+		m->data[3] = 1;
+		m->data[4] = 1;
+		m->data[5] = 1;
+		m->data[6] = 1;
+		m->data[7] = 2;
+		m->data[8] = 1;
+		double ris = det(m);
+		destroymatrix(m);
 	}
 
 	//LAPLACE 2x2
-	double *p2 = (double*)malloc(4 * sizeof(double));
-	if (p2)
+	struct matrix *m2 = creatematrix(2, 2);
+	if (m2)
 	{
-		p2[0] = 1;
-		p2[1] = 2;
-		p2[2] = 3;
-		p2[3] = 1;
-		double ris2 = det(p2, 2);
-		free(p2);
+		m2->data[0] = 1;
+		m2->data[1] = 2;
+		m2->data[2] = 3;
+		m2->data[3] = 1;
+		double ris2 = det(m2);
+		destroymatrix(m2);
 	}
 
 	//LAPLACE 1x1
-	double *p3 = (double*)malloc(sizeof(double));
-	if (p3)
+	struct matrix *m3 = creatematrix(1, 1);
+	if (m3)
 	{
-		p3[0] = 4;
-		double ris3 = det(p3, 1);
-		free(p3);
+		m3->data[0] = 4;
+		double ris3 = det(m3);
+		destroymatrix(m3);
 	}
 
 	//LAPLACE 3x3
-	double *p4 = (double*)malloc(9 * sizeof(double));
-	if (p4)
+	struct matrix *m4 = creatematrix(3, 3);
+	if (m4)
 	{
-		p4[0] = 1;
-		p4[1] = 2;
-		p4[2] = 3;
-		p4[3] = 1;
-		p4[4] = 1;
-		p4[5] = 1;
-		p4[6] = 1;
-		p4[7] = 2;
-		p4[8] = 1;
-		double ris4 = det(p4, 3);
-		free(p4);
+		m4->data[0] = 1;
+		m4->data[1] = 2;
+		m4->data[2] = 3;
+		m4->data[3] = 1;
+		m4->data[4] = 1;
+		m4->data[5] = 1;
+		m4->data[6] = 1;
+		m4->data[7] = 2;
+		m4->data[8] = 1;
+		double ris4 = det(m4);
+		destroymatrix(m4);
 	}
 
 	//LAPLACE 4x4
-	double *p5 = (double*)malloc(16 * sizeof(double));
-	if (p5)
+	struct matrix *m5 = creatematrix(4, 4);
+	if (m5)
 	{
-		p5[0] = 1;
-		p5[1] = 2;
-		p5[2] = 3;
-		p5[3] = 1;
-		p5[4] = 0;
-		p5[5] = 6;
-		p5[6] = 1;
-		p5[7] = -2;
-		p5[8] = 1;
-		p5[9] = 0;
-		p5[10] = 2;
-		p5[11] = 3;
-		p5[12] = 0;
-		p5[13] = 1;
-		p5[14] = 1;
-		p5[15] = 1;
-		double ris5 = det(p5, 4);
-		free(p5);
+		m5->data[0] = 1;
+		m5->data[1] = 2;
+		m5->data[2] = 3;
+		m5->data[3] = 1;
+		m5->data[4] = 0;
+		m5->data[5] = 6;
+		m5->data[6] = 1;
+		m5->data[7] = -2;
+		m5->data[8] = 1;
+		m5->data[9] = 0;
+		m5->data[10] = 2;
+		m5->data[11] = 3;
+		m5->data[12] = 0;
+		m5->data[13] = 1;
+		m5->data[14] = 1;
+		m5->data[15] = 1;
+		double ris5 = det(m5);
+		destroymatrix(m5);
 	}
 
 	//LAPLACE 5x5
-	double *p6 = (double*)malloc(25 * sizeof(double));
-	if (p6)
+	struct matrix *m6 = creatematrix(5, 5);
+	if (m6)
 	{
-		p6[0] = 1;
-		p6[1] = 3;
-		p6[2] = 1;
-		p6[3] = 2;
-		p6[4] = 1;
-		p6[5] = 0;
-		p6[6] = 1;
-		p6[7] = 0;
-		p6[8] = 1;
-		p6[9] = 1;
-		p6[10] = 1;
-		p6[11] = -1;
-		p6[12] = 1;
-		p6[13] = 0;
-		p6[14] = 0;
-		p6[15] = 1;
-		p6[16] = 0;
-		p6[17] = 2;
-		p6[18] = 2;
-		p6[19] = 4;
-		p6[20] = 1;
-		p6[21] = 1;
-		p6[22] = 0;
-		p6[23] = 1;
-		p6[24] = 0;
-		double ris6 = det(p6, 5);
-		free(p6);
+		m6->data[0] = 1;
+		m6->data[1] = 3;
+		m6->data[2] = 1;
+		m6->data[3] = 2;
+		m6->data[4] = 1;
+		m6->data[5] = 0;
+		m6->data[6] = 1;
+		m6->data[7] = 0;
+		m6->data[8] = 1;
+		m6->data[9] = 1;
+		m6->data[10] = 1;
+		m6->data[11] = -1;
+		m6->data[12] = 1;
+		m6->data[13] = 0;
+		m6->data[14] = 0;
+		m6->data[15] = 1;
+		m6->data[16] = 0;
+		m6->data[17] = 2;
+		m6->data[18] = 2;
+		m6->data[19] = 4;
+		m6->data[20] = 1;
+		m6->data[21] = 1;
+		m6->data[22] = 0;
+		m6->data[23] = 1;
+		m6->data[24] = 0;
+		double ris6 = det(m6, 5);
+		destroymatrix(m6);
+	}
+
+	//MULTIPLY TWO MATRICES
+	struct matrix *m7 = creatematrix(3, 3);
+	struct matrix *m8 = creatematrix(3, 2);
+	if (m7 && m8)
+	{
+		m7->data[0] = 1; //3x3
+		m7->data[1] = 0;
+		m7->data[2] = 1;
+		m7->data[3] = 1; 
+		m7->data[4] = 5; 
+		m7->data[5] = -1;
+		m7->data[6] = 3;
+		m7->data[7] = 2;
+		m7->data[8] = 0;
+
+		m8->data[0] = 7; //3x2
+		m8->data[1] = 1;
+		m8->data[2] = 1;
+		m8->data[3] = 0;
+		m8->data[4] = 0;
+		m8->data[5] = 4;
+		struct matrix *m7_8 = mulmatr(m7, m8);
+		//result matrix:
+		/*
+			7   5
+			12 -3
+			23  3
+		*/
+		destroymatrix(m7);
+		destroymatrix(m8);
+		destroymatrix(m7_8);
 	}
 	return 0;
 }

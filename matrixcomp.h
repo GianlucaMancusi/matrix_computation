@@ -9,10 +9,17 @@ struct matrix {
 	double* data;
 };
 
-extern double det(double *matr, int dim);
+//====== Useful functions =======
+
+extern double det(struct matrix *matr);//Calculates the determinant of matrices
+extern struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs);//Multiply 2 matrices
+extern struct matrix *creatematrix(size_t rows, size_t cols);
+extern void destroymatrix(struct matrix* m);
+
+//====== Internal functions =======
+
 extern void fillCompMinor(const double *src_matr, double *dst_matr, int src_dim, int row, int col);
 extern double* compMinor(double *matr, int matr_rows, int matr_cols, int row, int col);
 extern double det3x3(double *matr);
 extern double laplace(double *matr, int dim, double **compm_matrs, int start_dim);
-extern struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs);
-#endif //!MATRICE_H
+#endif //!MATRIX_H

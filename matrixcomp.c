@@ -1,9 +1,13 @@
 // Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi - Unimore
 #include "matrixcomp.h"
 
-double det(double *matr, int dim)
+/*
+	Calculate matrix determinant
+*/
+double det(struct matrix *matr)
 {
-	if (matr == NULL || dim <= 0) return 0;
+	if (matr == NULL || matr->rows <= 0 || matr->cols <= 0 || matr->cols != matr->rows) return 0;
+	size_t dim = matr->cols;
 	if (dim > 3)
 	{
 		double **compm_matrs = NULL; //allocates once all the space for the complementary minors up to 3x3 (...dim-3)
@@ -12,7 +16,7 @@ double det(double *matr, int dim)
 		{
 			compm_matrs[i] = malloc((i + 3)*(i + 3) * sizeof(double)); //allocate complementary matrix to use: [0] = 3x3... [1] = 4x4... ... [n-1] = (n-1 +3)x(n-1 +3)
 		}
-		double det = laplace(matr, dim, compm_matrs, dim);
+		double det = laplace(matr->data, dim, compm_matrs, dim);
 		if (compm_matrs != NULL)
 		{
 			for (int i = 0; i < dim - 3; i++)
@@ -23,7 +27,44 @@ double det(double *matr, int dim)
 		}
 		return det;
 	}
-	return laplace(matr, dim, NULL, 0);
+	return laplace(matr->data, dim, NULL, 0);
+}
+
+struct matrix *creatematrix(size_t rows, size_t cols)
+{
+	struct matrix *ris = malloc(sizeof(struct matrix));
+	ris->rows = rows;
+	ris->cols = cols;
+	ris->data = malloc(rows * cols * sizeof(double));
+	return ris;
+}
+
+void destroymatrix(struct matrix* m)
+{
+	free(m->data);
+	free(m);
+}
+
+struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
+{
+	if (lhs->cols != rhs->rows || lhs == NULL || rhs == NULL) return NULL;
+	size_t lcols = lhs->cols, rcols = rhs->cols;
+	struct matrix* ris = creatematrix(lhs->rows, rhs->cols);
+
+	for (size_t r = 0; r < ris->rows; r++)
+	{
+		for (size_t c = 0; c < ris->cols; c++)
+		{
+			double somma = 0;
+			for (size_t z = 0; z < lcols; z++)
+			{
+				somma += lhs->data[lcols * r + z] * rhs->data[rcols * z + c];
+			}
+			ris->data[ris->cols * r + c] = somma;
+		}
+	}
+
+	return ris;
 }
 
 double laplace(double *matr, int dim, double **compm_matrs, int start_dim)
@@ -78,35 +119,6 @@ double* compMinor(double *matr, int matr_rows, int matr_cols, int row, int col)
 		}
 	}
 	return n_matr;
-}
-
-
-struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
-{
-	size_t r, c, z, lcols = lhs->cols, rcols = rhs->cols;
-	struct matrix *ris = malloc(sizeof(struct matrix));
-	double somma;
-
-	if (lhs->cols != rhs->rows || lhs == NULL || rhs == NULL) return NULL;
-
-	ris->rows = lhs->rows;
-	ris->cols = rhs->cols;
-	ris->data = malloc(lhs->rows * rhs->cols * sizeof(double));
-
-	for (r = 0; r < ris->rows; r++)
-	{
-		for (c = 0; c < ris->rows; c++)
-		{
-			somma = 0;
-			for (z = 0; z < rcols; z++)
-			{
-				somma += lhs->data[lcols * r + z] * rhs->data[rcols * z + c];
-			}
-			ris->data[ris->cols * r + c] = somma;
-		}
-	}
-
-	return ris;
 }
 
 double det3x3(double *matr)
