@@ -2,6 +2,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include <stdlib.h>
+#include <stdarg.h>
 
 struct matrix {
 	size_t rows;
@@ -14,6 +15,8 @@ struct matrix {
 extern double det(struct matrix *matr);//Calculates the determinant of matrices
 extern struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs);//Multiply 2 matrices
 extern struct matrix *creatematrix(size_t rows, size_t cols);
+extern struct matrix *createemptymatrix(size_t rows, size_t cols); //empty matrix;
+extern int matrixrow(struct matrix* matr, size_t rowid, double *row);
 extern void destroymatrix(struct matrix* m);
 
 //====== Internal functions =======

@@ -110,31 +110,28 @@ int main(void)
 		m6->data[22] = 0;
 		m6->data[23] = 1;
 		m6->data[24] = 0;
-		double ris6 = det(m6, 5);
+		double ris6 = det(m6);
 		destroymatrix(m6);
 	}
 
 	//MULTIPLY TWO MATRICES
-	struct matrix *m7 = creatematrix(3, 3);
-	struct matrix *m8 = creatematrix(3, 2);
+	struct matrix *m7 = createemptymatrix(3, 3);
+	struct matrix *m8 = createemptymatrix(3, 2);
 	if (m7 && m8)
 	{
-		m7->data[0] = 1; //3x3
-		m7->data[1] = 0;
-		m7->data[2] = 1;
-		m7->data[3] = 1; 
-		m7->data[4] = 5; 
-		m7->data[5] = -1;
-		m7->data[6] = 3;
-		m7->data[7] = 2;
-		m7->data[8] = 0;
+		double row1[3] = { 1,0,1 };
+		double row2[3] = { 1,5,-1 };
+		double row3[3] = { 3,2,0 };
+		matrixrow(m7, 0, row1);
+		matrixrow(m7, 1, row2);
+		matrixrow(m7, 2, row3);
 
-		m8->data[0] = 7; //3x2
-		m8->data[1] = 1;
-		m8->data[2] = 1;
-		m8->data[3] = 0;
-		m8->data[4] = 0;
-		m8->data[5] = 4;
+		double row21[3] = { 7,1 };
+		double row22[3] = { 1,0 };
+		double row23[3] = { 0,4 };
+		matrixrow(m8, 0, row21);
+		matrixrow(m8, 1, row22);
+		matrixrow(m8, 2, row23);
 		struct matrix *m7_8 = mulmatr(m7, m8);
 		//result matrix:
 		/*

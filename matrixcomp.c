@@ -35,7 +35,18 @@ struct matrix *creatematrix(size_t rows, size_t cols)
 	struct matrix *ris = malloc(sizeof(struct matrix));
 	ris->rows = rows;
 	ris->cols = cols;
-	ris->data = malloc(rows * cols * sizeof(double));
+	if(rows*cols > 0)
+		ris->data = malloc(rows * cols * sizeof(double));
+	return ris;
+}
+
+struct matrix *createemptymatrix(size_t rows, size_t cols)
+{
+	struct matrix *ris = malloc(sizeof(struct matrix));
+	ris->rows = rows;
+	ris->cols = cols;
+	if (rows*cols > 0)
+		ris->data = calloc(rows * cols * sizeof(double), sizeof(double));
 	return ris;
 }
 
@@ -43,6 +54,16 @@ void destroymatrix(struct matrix* m)
 {
 	free(m->data);
 	free(m);
+}
+
+int matrixrow(struct matrix* matr, size_t rowid, double *row)
+{
+	if (matr == NULL && rowid >= matr->rows) return 0;
+	for (int c = 0; c < matr->cols; c++)
+	{
+		matr->data[matr->cols*rowid + c] = row[c];
+	}
+	return 1;
 }
 
 struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
@@ -67,7 +88,7 @@ struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
 	return ris;
 }
 
-double laplace(double *matr, int dim, double **compm_matrs, int start_dim)
+double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim)
 {
 	double det = 0;
 	if (matr == NULL || dim <= 0) return 0;
@@ -86,9 +107,9 @@ double laplace(double *matr, int dim, double **compm_matrs, int start_dim)
 	return det;
 }
 
-void fillCompMinor(const double *src_matr, double *dst_matr, int src_dim, int row, int col)
+void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, size_t row, size_t col)
 {
-	if (src_matr == NULL || dst_matr == NULL || src_dim <= 0 || row < 0 || col < 0 || row >= src_dim || col >= src_dim) return;
+	if (src_matr == NULL || dst_matr == NULL || src_dim <= 0 || row >= src_dim || col >= src_dim) return;
 	for (int i = 0, j = 0; i < src_dim*src_dim; i++)
 	{
 		int r = i / src_dim;
