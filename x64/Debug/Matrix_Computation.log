@@ -1,14 +1,8 @@
 ﻿  matrixcomp.c
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(19): warning C4267: 'funzione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(30): warning C4267: 'funzione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(92): warning C4028: parametro formale 2 differente dalla dichiarazione
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(92): warning C4028: parametro formale 4 differente dalla dichiarazione
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(103): warning C4267: 'funzione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(111): warning C4028: parametro formale 3 differente dalla dichiarazione
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(111): warning C4028: parametro formale 4 differente dalla dichiarazione
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(111): warning C4028: parametro formale 5 differente dalla dichiarazione
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(115): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-  main.c
-  Generazione del codice in corso...
+c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(17): warning C4020: 'laplace': troppi parametri effettivi
+c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(28): warning C4020: 'laplace': troppi parametri effettivi
+c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(103): warning C4029: dichiarato un elenco di parametri formali diverso dalla definizione
+c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(132): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(150): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
   Matrix_Computation.vcxproj -> C:\Users\carlopc\Source\Repos\matrix_computation\x64\Debug\Matrix_Computation.exe
   Matrix_Computation.vcxproj -> C:\Users\carlopc\Source\Repos\matrix_computation\x64\Debug\Matrix_Computation.pdb (Partial PDB)

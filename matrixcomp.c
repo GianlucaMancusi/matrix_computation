@@ -1,9 +1,6 @@
-// Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi - Unimore
+// Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi -  from the"Enzo Ferrari" Department of Engineering
+// http://www.ingmo.unimore.it/site/en/home.html
 #include "matrixcomp.h"
-
-/*
-	Calculate matrix determinant
-*/
 double det(struct matrix *matr)
 {
 	if (matr == NULL || matr->rows <= 0 || matr->cols <= 0 || matr->cols != matr->rows) return 0;
@@ -16,7 +13,8 @@ double det(struct matrix *matr)
 		{
 			compm_matrs[i] = malloc((i + 3)*(i + 3) * sizeof(double)); //allocate complementary matrix to use: [0] = 3x3... [1] = 4x4... ... [n-1] = (n-1 +3)x(n-1 +3)
 		}
-		double det = laplace(matr->data, dim, compm_matrs, dim);
+		struct matrix_selection selection = findlinewithmorezeros(matr);
+		double det = laplace(matr->data, dim, compm_matrs, dim, &selection);
 		if (compm_matrs != NULL)
 		{
 			for (int i = 0; i < dim - 3; i++)
@@ -27,10 +25,10 @@ double det(struct matrix *matr)
 		}
 		return det;
 	}
-	return laplace(matr->data, dim, NULL, 0);
+	return laplace(matr->data, dim, NULL, 0, NULL);
 }
 
-struct matrix *creatematrix(size_t rows, size_t cols)
+struct matrix *creatematr(size_t rows, size_t cols)
 {
 	struct matrix *ris = malloc(sizeof(struct matrix));
 	ris->rows = rows;
@@ -40,7 +38,7 @@ struct matrix *creatematrix(size_t rows, size_t cols)
 	return ris;
 }
 
-struct matrix *createemptymatrix(size_t rows, size_t cols)
+struct matrix *createemptymatr(size_t rows, size_t cols)
 {
 	struct matrix *ris = malloc(sizeof(struct matrix));
 	ris->rows = rows;
@@ -50,13 +48,13 @@ struct matrix *createemptymatrix(size_t rows, size_t cols)
 	return ris;
 }
 
-void destroymatrix(struct matrix* m)
+void destroymatr(struct matrix* matr)
 {
-	free(m->data);
-	free(m);
+	free(matr->data);
+	free(matr);
 }
 
-int matrixrow(struct matrix* matr, size_t rowid, double *row)
+int matrrow(struct matrix* matr, size_t rowid, double *row)
 {
 	if (matr == NULL && rowid >= matr->rows) return 0;
 	for (int c = 0; c < matr->cols; c++)
@@ -66,11 +64,24 @@ int matrixrow(struct matrix* matr, size_t rowid, double *row)
 	return 1;
 }
 
+struct matrix *clonematr(struct matrix* matr)
+{
+	struct matrix* p = malloc(sizeof(struct matrix));
+	p->data = malloc(matr->rows * matr->cols * sizeof(double));
+	p->cols = matr->cols;
+	p->rows = matr->rows;
+	for (int i = 0; i < matr->cols*matr->rows; i++)
+	{
+		p->data[i] = matr->data[i];
+	}
+	return p;
+}
+
 struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
 {
 	if (lhs->cols != rhs->rows || lhs == NULL || rhs == NULL) return NULL;
 	size_t lcols = lhs->cols, rcols = rhs->cols;
-	struct matrix* ris = creatematrix(lhs->rows, rhs->cols);
+	struct matrix* ris = creatematr(lhs->rows, rhs->cols);
 
 	for (size_t r = 0; r < ris->rows; r++)
 	{
@@ -88,7 +99,7 @@ struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
 	return ris;
 }
 
-double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim)
+double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim, struct matrix_selection *selection)
 {
 	double det = 0;
 	if (matr == NULL || dim <= 0) return 0;
@@ -99,9 +110,16 @@ double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim)
 	{
 		if (matr[i] != 0)
 		{
+			size_t row = 0, col = i;
+			if (selection != NULL)
+			{
+				row = selection->rows + (selection->selection == row ? 0 : i);
+				col = selection->cols + (selection->selection == col ? 0 : i);
+			}
 			double* current_matr = dim == start_dim ? matr : compm_matrs[dim - 3];
-			fillCompMinor(current_matr, compm_matrs[dim-1 - 3], dim, 0, i);
-			det += (i % 2 == 0 ? 1 : -1) * matr[i] * laplace(compm_matrs[dim-1 - 3], dim - 1, compm_matrs, start_dim);
+			fillCompMinor(current_matr, compm_matrs[dim-1 - 3], dim, row, col);
+			struct matrix_selection r_selection = findlinewithmorezeros(compm_matrs[dim - 1 - 3]);
+			det += (i % 2 == 0 ? 1 : -1) * matr[i] * laplace(compm_matrs[dim-1 - 3], dim - 1, compm_matrs, start_dim, &r_selection);
 		}
 	}
 	return det;
@@ -122,24 +140,67 @@ void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, siz
 	}
 }
 
-double* compMinor(double *matr, int matr_rows, int matr_cols, int row, int col)
+struct matrix* matrcompminor(struct matrix *matr, int row, int col)
 {
-	if (matr == NULL || matr_rows == 0 || matr_cols == 0 || row >= matr_rows || col >= matr_cols) return NULL;
-	double *n_matr = malloc((matr_cols - 1)*(matr_rows - 1) * sizeof(double));
-	if (n_matr)
+	if (matr == NULL || matr->rows == 0 || matr->cols == 0 || row >= matr->rows || col >= matr->cols) return NULL;
+	struct matrix *p = creatematr((matr->rows - 1),(matr->cols - 1));
+	if (p)
 	{
-		for (int i = 0, j = 0; i < matr_rows*matr_cols; i++)
+		for (int i = 0, j = 0; i < matr->rows*matr->cols; i++)
 		{
-			int r = i / matr_cols;
-			int c = i % matr_cols;
+			int r = i / matr->cols;
+			int c = i % matr->cols;
 			if (r != row && c != col)
 			{
-				n_matr[j] = matr[i];
+				p->data[j] = matr->data[i];
 				j++;
 			}
 		}
 	}
-	return n_matr;
+	return p;
+}
+
+struct matrix_selection findlinewithmorezeros(struct matrix *matr)
+{
+	struct matrix_selection selection = { 0, 0, row };
+	size_t zeros = 0;
+	for (int r = 0; r < matr->rows; r++)
+	{
+		int count = 0;
+		for (int c = 0; c < matr->cols; c++)
+		{
+			if (matr->data[matr->cols*r + c] == 0)
+			{
+				count++;
+			}
+		}
+		if (count > zeros)
+		{
+			zeros = count;
+			selection.cols = 0;
+			selection.rows = r;
+			selection.selection = row;
+		}
+	}
+	for (int c = 0; c < matr->cols; c++)
+	{
+		int count = 0;
+		for (int r = 0; r < matr->rows; r++)
+		{
+			if (matr->data[matr->cols*r + c] == 0)
+			{
+				count++;
+			}
+		}
+		if (count > zeros)
+		{
+			zeros = count;
+			selection.cols = c;
+			selection.rows = 0;
+			selection.selection = col;
+		}
+	}
+	return selection;
 }
 
 double det3x3(double *matr)
