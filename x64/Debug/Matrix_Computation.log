@@ -1,5 +1,5 @@
 ﻿  matrixcomp.c
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(19): warning C4267: 'funzione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-c:\users\carlopc\source\repos\matrix_computation\matrixcomp.c(30): warning C4267: 'funzione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  main.c
+  Generazione del codice in corso...
   Matrix_Computation.vcxproj -> C:\Users\carlopc\Source\Repos\matrix_computation\x64\Debug\Matrix_Computation.exe
   Matrix_Computation.vcxproj -> C:\Users\carlopc\Source\Repos\matrix_computation\x64\Debug\Matrix_Computation.pdb (Partial PDB)
