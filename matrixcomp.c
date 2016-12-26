@@ -109,7 +109,7 @@ struct matrix *mulmatr(const struct matrix *lhs, const struct matrix *rhs)
 	return ris;
 }
 
-double laplace(const double *matr, size_t dim, const double **compm_matrs, size_t start_dim, const struct matrix_selection *selection)
+double laplace(const double *matr, size_t dim, double **compm_matrs, size_t start_dim, const struct matrix_selection *selection)
 {
 	double det = 0;
 	if (matr == NULL || dim <= 0) return 0;
@@ -126,7 +126,7 @@ double laplace(const double *matr, size_t dim, const double **compm_matrs, size_
 		}
 		if (matr[dim*curr_row+curr_col] != 0)
 		{
-			double* current_matr = dim == start_dim ? matr : compm_matrs[dim - 3];
+			const double* current_matr = dim == start_dim ? matr : compm_matrs[dim - 3];
 			fillCompMinor(current_matr, compm_matrs[dim-1 - 3], dim, curr_row, curr_col);
 			struct matrix_selection r_selection = findlinewithmorezeros(creatematrfrom(compm_matrs[dim-1 -3], curr_row, curr_col));
 			det += (i % 2 == 0 ? 1 : -1) * matr[dim*curr_row+curr_col] * laplace(compm_matrs[dim-1 - 3], dim - 1, compm_matrs, start_dim, &r_selection);
@@ -140,8 +140,8 @@ void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, siz
 	if (src_matr == NULL || dst_matr == NULL || src_dim <= 0 || row >= src_dim || col >= src_dim) return;
 	for (int i = 0, j = 0; i < src_dim*src_dim; i++)
 	{
-		int r = i / src_dim;
-		int c = i % src_dim;
+		size_t r = i / src_dim;
+		size_t c = i % src_dim;
 		if (r != row && c != col)
 		{
 			dst_matr[j] = src_matr[i];
@@ -158,8 +158,8 @@ struct matrix* matrcompminor(const struct matrix *matr, int row, int col)
 	{
 		for (int i = 0, j = 0; i < matr->rows*matr->cols; i++)
 		{
-			int r = i / matr->cols;
-			int c = i % matr->cols;
+			size_t r = i / matr->cols;
+			size_t c = i % matr->cols;
 			if (r != row && c != col)
 			{
 				p->data[j] = matr->data[i];

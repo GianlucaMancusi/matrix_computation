@@ -34,13 +34,13 @@ extern struct matrix *createemptymatr(size_t rows, size_t cols); //empty matrix;
 extern struct matrix *creatematrfrom(const double* matr, size_t row, size_t col); //create matrix from 3 parameters
 extern struct matrix *clonematr(const struct matrix* matr);
 extern struct matrix* matrcompminor(const struct matrix *matr, int row, int col); //Find a complementary minor from row and col
-extern int matrrow(const struct matrix* matr, size_t rowid, double *row); //Change the entire row
+extern int matrrow(const struct matrix* matr, size_t rowid, const double *row); //Change the entire row
 extern void destroymatr(struct matrix* matr);
 
 //====== Internal functions =======
 
 extern void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, size_t row, size_t col);
 extern double det3x3(const double *matr);
-extern double laplace(const double *matr, size_t dim, const double **compm_matrs, size_t start_dim, const struct matrix_selection *selection);
+extern double laplace(const double *matr, size_t dim, double **compm_matrs, size_t start_dim, const struct matrix_selection *selection);
 extern struct matrix_selection findlinewithmorezeros(const struct matrix *matr);
 #endif //!MATRIXCOMP_H
