@@ -1,7 +1,7 @@
 // Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi -  from the"Enzo Ferrari" Department of Engineering
 // http://www.ingmo.unimore.it/site/en/home.html
 #include "matrixcomp.h"
-double det(struct matrix *matr)
+double det(const struct matrix *matr)
 {
 	if (matr == NULL || matr->rows <= 0 || matr->cols <= 0 || matr->cols != matr->rows) return 0;
 	size_t dim = matr->cols;
@@ -54,7 +54,7 @@ void destroymatr(struct matrix* matr)
 	free(matr);
 }
 
-int matrrow(struct matrix* matr, size_t rowid, double *row)
+int matrrow(const struct matrix* matr, size_t rowid, const double *row)
 {
 	if (matr == NULL && rowid >= matr->rows) return 0;
 	for (int c = 0; c < matr->cols; c++)
@@ -64,7 +64,7 @@ int matrrow(struct matrix* matr, size_t rowid, double *row)
 	return 1;
 }
 
-struct matrix *clonematr(struct matrix* matr)
+struct matrix *clonematr(const struct matrix* matr)
 {
 	struct matrix* p = malloc(sizeof(struct matrix));
 	p->data = malloc(matr->rows * matr->cols * sizeof(double));
@@ -77,7 +77,17 @@ struct matrix *clonematr(struct matrix* matr)
 	return p;
 }
 
-struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
+struct matrix *creatematrfrom(const double* matr, size_t row, size_t col)
+{
+	struct matrix* p = creatematr(row, col);
+	for (int i = 0; i < row*col; i++)
+	{
+		p->data[i] = matr[i];
+	}
+	return p;
+}
+
+struct matrix *mulmatr(const struct matrix *lhs, const struct matrix *rhs)
 {
 	if (lhs->cols != rhs->rows || lhs == NULL || rhs == NULL) return NULL;
 	size_t lcols = lhs->cols, rcols = rhs->cols;
@@ -99,7 +109,7 @@ struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs)
 	return ris;
 }
 
-double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim, struct matrix_selection *selection)
+double laplace(const double *matr, size_t dim, const double **compm_matrs, size_t start_dim, const struct matrix_selection *selection)
 {
 	double det = 0;
 	if (matr == NULL || dim <= 0) return 0;
@@ -108,18 +118,18 @@ double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim,
 	else if (dim == 3) return det3x3(matr);
 	for (int i = 0; i < dim; i++)
 	{
-		if (matr[i] != 0)
+		size_t curr_row = 0, curr_col = i;
+		if (selection != NULL)
 		{
-			size_t row = 0, col = i;
-			if (selection != NULL)
-			{
-				row = selection->rows + (selection->selection == row ? 0 : i);
-				col = selection->cols + (selection->selection == col ? 0 : i);
-			}
+			curr_row = selection->rows + (selection->selection == row ? 0 : i);
+			curr_col = selection->cols + (selection->selection == col ? 0 : i);
+		}
+		if (matr[dim*curr_row+curr_col] != 0)
+		{
 			double* current_matr = dim == start_dim ? matr : compm_matrs[dim - 3];
-			fillCompMinor(current_matr, compm_matrs[dim-1 - 3], dim, row, col);
-			struct matrix_selection r_selection = findlinewithmorezeros(compm_matrs[dim - 1 - 3]);
-			det += (i % 2 == 0 ? 1 : -1) * matr[i] * laplace(compm_matrs[dim-1 - 3], dim - 1, compm_matrs, start_dim, &r_selection);
+			fillCompMinor(current_matr, compm_matrs[dim-1 - 3], dim, curr_row, curr_col);
+			struct matrix_selection r_selection = findlinewithmorezeros(creatematrfrom(compm_matrs[dim-1 -3], curr_row, curr_col));
+			det += (i % 2 == 0 ? 1 : -1) * matr[dim*curr_row+curr_col] * laplace(compm_matrs[dim-1 - 3], dim - 1, compm_matrs, start_dim, &r_selection);
 		}
 	}
 	return det;
@@ -140,7 +150,7 @@ void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, siz
 	}
 }
 
-struct matrix* matrcompminor(struct matrix *matr, int row, int col)
+struct matrix* matrcompminor(const struct matrix *matr, int row, int col)
 {
 	if (matr == NULL || matr->rows == 0 || matr->cols == 0 || row >= matr->rows || col >= matr->cols) return NULL;
 	struct matrix *p = creatematr((matr->rows - 1),(matr->cols - 1));
@@ -160,7 +170,7 @@ struct matrix* matrcompminor(struct matrix *matr, int row, int col)
 	return p;
 }
 
-struct matrix_selection findlinewithmorezeros(struct matrix *matr)
+struct matrix_selection findlinewithmorezeros(const struct matrix *matr)
 {
 	struct matrix_selection selection = { 0, 0, row };
 	size_t zeros = 0;
@@ -203,7 +213,7 @@ struct matrix_selection findlinewithmorezeros(struct matrix *matr)
 	return selection;
 }
 
-double det3x3(double *matr)
+double det3x3(const double *matr)
 {
 	if (matr == NULL) return 0;
 	return (matr[0] * matr[4] * matr[8]) + (matr[1] * matr[5] * matr[6]) + (matr[2] * matr[3] * matr[7]) - (matr[2] * matr[4] * matr[6]) - (matr[0] * matr[5] * matr[7]) - (matr[1] * matr[3] * matr[8]);

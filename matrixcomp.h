@@ -19,7 +19,7 @@ struct matrix_selection
 	uint8_t selection;
 };
 
-enum
+enum linetype
 {
 	row,
 	col
@@ -27,19 +27,20 @@ enum
 
 //====== Useful functions =======
 
-extern double det(struct matrix *matr);//Calculates the determinant of matrices
-extern struct matrix *mulmatr(struct matrix *lhs, struct matrix *rhs);//Multiply 2 matrices
+extern double det(const struct matrix *matr);//Calculates the determinant of matrices
+extern struct matrix *mulmatr(const struct matrix *lhs, const struct matrix *rhs);//Multiply 2 matrices
 extern struct matrix *creatematr(size_t rows, size_t cols);
 extern struct matrix *createemptymatr(size_t rows, size_t cols); //empty matrix;
-extern struct matrix *clonematr(struct matrix* matr);
-extern struct matrix* matrcompminor(struct matrix *matr, int row, int col); //Find a complementary minor from row and col
-extern int matrrow(struct matrix* matr, size_t rowid, double *row); //Change the entire row
+extern struct matrix *creatematrfrom(const double* matr, size_t row, size_t col); //create matrix from 3 parameters
+extern struct matrix *clonematr(const struct matrix* matr);
+extern struct matrix* matrcompminor(const struct matrix *matr, int row, int col); //Find a complementary minor from row and col
+extern int matrrow(const struct matrix* matr, size_t rowid, double *row); //Change the entire row
 extern void destroymatr(struct matrix* matr);
 
 //====== Internal functions =======
 
 extern void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, size_t row, size_t col);
-extern double det3x3(double *matr);
-extern double laplace(double *matr, size_t dim, double **compm_matrs, size_t start_dim);
-extern struct matrix_selection findlinewithmorezeros(struct matrix *matr);
+extern double det3x3(const double *matr);
+extern double laplace(const double *matr, size_t dim, const double **compm_matrs, size_t start_dim, const struct matrix_selection *selection);
+extern struct matrix_selection findlinewithmorezeros(const struct matrix *matr);
 #endif //!MATRIXCOMP_H

@@ -79,7 +79,7 @@ int main(void)
 		matr5->data[13] = 1;
 		matr5->data[14] = 1;
 		matr5->data[15] = 1;
-		double ris5 = det(matr5);
+		double ris5 = det(matr5); //DET = -12
 		destroymatr(matr5);
 	}
 
