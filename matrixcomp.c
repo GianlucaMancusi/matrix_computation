@@ -1,6 +1,8 @@
 // Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi -  from the"Enzo Ferrari" Department of Engineering
 // http://www.ingmo.unimore.it/site/en/home.html
 #include "matrixcomp.h"
+#include <string.h>	
+
 double det(const struct matrix *matr)
 {
 	if (matr == NULL || matr->rows <= 0 || matr->cols <= 0 || matr->cols != matr->rows) return 0;
@@ -54,6 +56,14 @@ void destroymatr(struct matrix* matr)
 	free(matr);
 }
 
+double * elementAt(struct matrix * matr, size_t rowIndex, size_t colIndex)
+{
+	if (colIndex >= matr->cols || rowIndex >= matr->rows)
+		return NULL;
+
+	return matr->data + (matr->cols * rowIndex + colIndex);
+}
+
 int matrrow(const struct matrix* matr, size_t rowid, const double *row)
 {
 	if (matr == NULL && rowid >= matr->rows) return 0;
@@ -70,10 +80,9 @@ struct matrix *clonematr(const struct matrix* matr)
 	p->data = malloc(matr->rows * matr->cols * sizeof(double));
 	p->cols = matr->cols;
 	p->rows = matr->rows;
-	for (int i = 0; i < matr->cols*matr->rows; i++)
-	{
-		p->data[i] = matr->data[i];
-	}
+	
+	memcpy(p->data, matr->data, matr->rows * matr->cols);		//Faster than previous solution.
+
 	return p;
 }
 
