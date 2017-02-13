@@ -3,7 +3,7 @@
 #include "matrixcomp.h"
 #include <string.h>	
 
-//Tanto per provare 22222
+//Tanto per provare 22222 Questo è un bug
 
 double det(const struct matrix *matr)
 {
