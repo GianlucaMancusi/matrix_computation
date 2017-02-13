@@ -3,7 +3,7 @@
 #include "matrixcomp.h"
 #include <string.h>	
 
-//Tanto per provare
+//Tanto per provare 22222
 
 double det(const struct matrix *matr)
 {
