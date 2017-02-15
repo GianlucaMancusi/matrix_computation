@@ -1,6 +1,8 @@
 // Gianluca Mancusi, Daniele Manicardi, Gianmarco Lusvardi -  from the"Enzo Ferrari" Department of Engineering
 // http://www.ingmo.unimore.it/site/en/home.html
 #include "matrixcomp.h"
+#include <assert.h>
+
 int main(void)
 {
 	//EXAMPLES
@@ -137,5 +139,55 @@ int main(void)
 		destroymatr(matr8);
 		destroymatr(matr7_8);
 	}
+
+	//ROW ECHELON FORM
+	struct matrix *matr9 = createemptymatr(4, 5);
+	{
+		double row0[] = { 2, 4, 6, 10, 3 };
+		double row1[] = { 2, 5, 7, 12, 3 };
+		double row2[] = { 1, 6, 7, 13, 1 };
+		double row3[] = { 1, 2, 3, 4, 5 };
+		matrrow(matr9, 0, row0);
+		matrrow(matr9, 1, row1);
+		matrrow(matr9, 2, row2);
+		matrrow(matr9, 3, row3);
+	}
+	rowEchelonForm(matr9);
+
+
+	free(matr9);
+	/* result 2,4,6,10,3,0,1,1,2,0,0,0,0,-1,3,0,0,0,0,0.5*/
+
+	struct matrix *matr10 = createemptymatr(6, 6);
+	{
+		double row0[] = { 2, 4, 6, 10, 3,6 };
+		double row1[] = { 2, 5, 7, 12, 3,3 };
+		double row2[] = { 1, 6, 7, 13, 1,8 };
+		double row3[] = { 1, 2, 3, 4, 5,9 };
+		double row4[] = { 1, 6, 12, 13, 1,15 };
+		double row5[] = { 1, 2, 3, 4, 5,67 };
+
+		matrrow(matr10, 0, row0);
+		matrrow(matr10, 1, row1);
+		matrrow(matr10, 2, row2);
+		matrrow(matr10, 3, row3);
+		matrrow(matr10, 4, row4);
+		matrrow(matr10, 5, row5);
+	}
+
+	rowEchelonForm(matr10);
+
+	printMatrix(matr10, stdout);
+
+	double d = 1;
+	for (size_t i = 0; i < matr10->cols; i++)
+	{
+		d *= (*elementAt(matr10, i, i));
+	}
+
+	assert(d == -290);		//Determinant of matr10 is -290.
+
+	free(matr10);
+
 	return 0;
 }
