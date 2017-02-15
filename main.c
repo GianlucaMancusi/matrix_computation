@@ -155,7 +155,7 @@ int main(void)
 	rowEchelonForm(matr9);
 
 
-	free(matr9);
+	destroymatr(matr9);
 	/* result 2,4,6,10,3,0,1,1,2,0,0,0,0,-1,3,0,0,0,0,0.5*/
 
 	struct matrix *matr10 = createemptymatr(6, 6);
@@ -187,7 +187,7 @@ int main(void)
 
 	assert(d == -290);		//Determinant of matr10 is -290.
 
-	free(matr10);
+	destroymatr(matr10);
 
 	return 0;
 }
