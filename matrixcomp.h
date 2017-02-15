@@ -36,6 +36,7 @@ extern struct matrix *clonematr(const struct matrix* matr);
 extern struct matrix* matrcompminor(const struct matrix *matr, int row, int col); //Find a complementary minor from row and col
 extern int matrrow(const struct matrix* matr, size_t rowid, const double *row); //Change the entire row
 extern void destroymatr(struct matrix* matr);
+extern double *elementAt(struct matrix *matr, size_t rowIndex, size_t colIndex);//Fast way to access an element of a matrix without thinking too much about it.
 
 //====== Internal functions =======
 
