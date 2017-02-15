@@ -2,6 +2,7 @@
 // http://www.ingmo.unimore.it/site/en/home.html
 #include "matrixcomp.h"
 #include <string.h>	
+#include <assert.h>
 
 double det(const struct matrix *matr)
 {
@@ -46,7 +47,7 @@ struct matrix *createemptymatr(size_t rows, size_t cols)
 	ris->rows = rows;
 	ris->cols = cols;
 	if (rows*cols > 0)
-		ris->data = calloc(rows * cols * sizeof(double), sizeof(double));
+		ris->data = calloc(rows * cols, sizeof(double));
 	return ris;
 }
 
@@ -62,6 +63,51 @@ double * elementAt(struct matrix * matr, size_t rowIndex, size_t colIndex)
 		return NULL;
 
 	return matr->data + (matr->cols * rowIndex + colIndex);
+}
+
+void rowEchelonForm(struct matrix * matr)
+{
+	size_t cRow = 1;		//Starts from 1 for rows
+	//Iterate on columns
+	for (size_t c = 0; c < matr->cols && cRow<matr->rows; c++)
+	{
+		//Find the first element that is non-zero in the column (starting by the c-th row, the others are already reduced)
+		size_t firstNonZeroRowIndex = cRow-1;
+		for (; firstNonZeroRowIndex < matr->rows; firstNonZeroRowIndex++)
+		{
+			if (matr->data[matr->cols * firstNonZeroRowIndex + c] != 0)
+				break;
+		}
+		
+		if (firstNonZeroRowIndex == matr->rows)			//There is no non-zero element in this column.
+			continue;
+
+		if (firstNonZeroRowIndex != cRow-1)
+		{
+			//Sum to the c-th row the one found (I'm now currently working on the c-th row and the c-th column)
+			sumTwoRows(matr, cRow-1, firstNonZeroRowIndex, 1);		
+		}
+
+		double a = matr->data[(cRow-1)*matr->cols + c];
+		for (size_t r = cRow; r < matr->rows; r++)
+		{
+			sumTwoRows(matr, r, cRow-1, -matr->data[r* matr->cols + c] / a);
+		}
+
+		cRow++;
+	}
+}
+
+void printMatrix(struct matrix * matr, FILE * f)
+{
+	for (size_t r = 0; r < matr->rows; r++)
+	{
+		for (size_t c = 0; c < matr->cols; c++)
+		{
+			printf("%20.3lf", matr->data[r*matr->cols + c]);
+		}
+	}
+	return;
 }
 
 int matrrow(const struct matrix* matr, size_t rowid, const double *row)
@@ -226,4 +272,19 @@ double det3x3(const double *matr)
 {
 	if (matr == NULL) return 0;
 	return (matr[0] * matr[4] * matr[8]) + (matr[1] * matr[5] * matr[6]) + (matr[2] * matr[3] * matr[7]) - (matr[2] * matr[4] * matr[6]) - (matr[0] * matr[5] * matr[7]) - (matr[1] * matr[3] * matr[8]);
+}
+
+void sumTwoRows(struct matrix * matr, size_t rowDest, size_t rowSource, double lambda)
+{
+	assert(!(rowDest >= matr->rows || rowSource >= matr->rows));
+
+	if (rowDest >= matr->rows || rowSource >= matr->rows)
+		return;
+	
+	for (size_t c = 0; c < matr->cols; c++)
+	{
+		matr->data[rowDest * matr->cols + c] += matr->data[rowSource * matr->cols + c] * lambda;
+	}
+
+	return;
 }
