@@ -3,8 +3,6 @@
 #include "matrixcomp.h"
 #include <string.h>	
 
-//Tanto per provare
-
 double det(const struct matrix *matr)
 {
 	if (matr == NULL || matr->rows <= 0 || matr->cols <= 0 || matr->cols != matr->rows) return 0;
