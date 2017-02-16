@@ -4,6 +4,7 @@
 #include <string.h>	
 #include <assert.h>
 
+//Calculates the determinant with Laplace's rule
 double det(const struct matrix *matr)
 {
 	if (matr == NULL || matr->rows <= 0 || matr->cols <= 0 || matr->cols != matr->rows) return 0;
@@ -31,6 +32,7 @@ double det(const struct matrix *matr)
 	return laplace(matr->data, dim, NULL, 0, NULL);
 }
 
+//Allocates the space for a new matrix 
 struct matrix *creatematr(size_t rows, size_t cols)
 {
 	struct matrix *ris = malloc(sizeof(struct matrix));
@@ -40,7 +42,7 @@ struct matrix *creatematr(size_t rows, size_t cols)
 		ris->data = malloc(rows * cols * sizeof(double));
 	return ris;
 }
-
+//Allocates the space for a new matrix and initialises its members to 0
 struct matrix *createemptymatr(size_t rows, size_t cols)
 {
 	struct matrix *ris = malloc(sizeof(struct matrix));
@@ -51,12 +53,14 @@ struct matrix *createemptymatr(size_t rows, size_t cols)
 	return ris;
 }
 
+//Frees the memory occupied by an existing matrix
 void destroymatr(struct matrix* matr)
 {
 	free(matr->data);
 	free(matr);
 }
 
+//Returns the pointer of an element of the matrix given its row and column indicies
 double * elementAt(struct matrix * matr, size_t rowIndex, size_t colIndex)
 {
 	if (colIndex >= matr->cols || rowIndex >= matr->rows)
@@ -65,6 +69,7 @@ double * elementAt(struct matrix * matr, size_t rowIndex, size_t colIndex)
 	return matr->data + (matr->cols * rowIndex + colIndex);
 }
 
+//Reduces a matrix in Row Echelon Form. For more information see 
 void rowEchelonForm(struct matrix * matr)
 {
 	size_t cRow = 1;		//Starts from 1 for rows
@@ -98,18 +103,22 @@ void rowEchelonForm(struct matrix * matr)
 	}
 }
 
+//Prints a matrix on a file
 void printMatrix(struct matrix * matr, FILE * f)
 {
+	
 	for (size_t r = 0; r < matr->rows; r++)
 	{
 		for (size_t c = 0; c < matr->cols; c++)
 		{
-			printf("%20.3lf", matr->data[r*matr->cols + c]);
+			printf("%13.5lg", matr->data[r*matr->cols + c]);
 		}
+		printf("\n");
 	}
 	return;
 }
 
+//Writes a column on the matrix
 int matrrow(const struct matrix* matr, size_t rowid, const double *row)
 {
 	if (matr == NULL && rowid >= matr->rows) return 0;
@@ -120,6 +129,7 @@ int matrrow(const struct matrix* matr, size_t rowid, const double *row)
 	return 1;
 }
 
+//Clones a matrix
 struct matrix *clonematr(const struct matrix* matr)
 {
 	struct matrix* p = malloc(sizeof(struct matrix));
@@ -132,6 +142,7 @@ struct matrix *clonematr(const struct matrix* matr)
 	return p;
 }
 
+//
 struct matrix *creatematrfrom(const double* matr, size_t row, size_t col)
 {
 	struct matrix* p = creatematr(row, col);
@@ -142,6 +153,7 @@ struct matrix *creatematrfrom(const double* matr, size_t row, size_t col)
 	return p;
 }
 
+//Matrix product
 struct matrix *mulmatr(const struct matrix *lhs, const struct matrix *rhs)
 {
 	if (lhs->cols != rhs->rows || lhs == NULL || rhs == NULL) return NULL;
@@ -163,6 +175,7 @@ struct matrix *mulmatr(const struct matrix *lhs, const struct matrix *rhs)
 
 	return ris;
 }
+
 
 double laplace(const double *matr, size_t dim, double **compm_matrs, size_t start_dim, const struct matrix_selection *selection)
 {
@@ -274,6 +287,7 @@ double det3x3(const double *matr)
 	return (matr[0] * matr[4] * matr[8]) + (matr[1] * matr[5] * matr[6]) + (matr[2] * matr[3] * matr[7]) - (matr[2] * matr[4] * matr[6]) - (matr[0] * matr[5] * matr[7]) - (matr[1] * matr[3] * matr[8]);
 }
 
+//Sums to rowDest rowSource * lambda
 void sumTwoRows(struct matrix * matr, size_t rowDest, size_t rowSource, double lambda)
 {
 	assert(!(rowDest >= matr->rows || rowSource >= matr->rows));
