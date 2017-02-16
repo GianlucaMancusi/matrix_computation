@@ -160,7 +160,7 @@ int main(void)
 
 	struct matrix *matr10 = createemptymatr(6, 6);
 	{
-		double row0[] = { 2, 4, 6, 10, 3,6 };
+		double row0[] = { 2, 4, 6, 10225566.2123655, 3,6 };
 		double row1[] = { 2, 5, 7, 12, 3,3 };
 		double row2[] = { 1, 6, 7, 13, 1,8 };
 		double row3[] = { 1, 2, 3, 4, 5,9 };
