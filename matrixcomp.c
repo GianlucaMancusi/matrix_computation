@@ -38,7 +38,7 @@ struct matrix *creatematr(size_t rows, size_t cols)
 	struct matrix *ris = malloc(sizeof(struct matrix));
 	ris->rows = rows;
 	ris->cols = cols;
-	if(rows*cols > 0)
+	if (rows*cols > 0)
 		ris->data = malloc(rows * cols * sizeof(double));
 	return ris;
 }
@@ -74,29 +74,29 @@ void rowEchelonForm(struct matrix * matr)
 {
 	size_t cRow = 1;		//Starts from 1 for rows
 	//Iterate on columns
-	for (size_t c = 0; c < matr->cols && cRow<matr->rows; c++)
+	for (size_t c = 0; c < matr->cols && cRow < matr->rows; c++)
 	{
 		//Find the first element that is non-zero in the column (starting by the c-th row, the others are already reduced)
-		size_t firstNonZeroRowIndex = cRow-1;
+		size_t firstNonZeroRowIndex = cRow - 1;
 		for (; firstNonZeroRowIndex < matr->rows; firstNonZeroRowIndex++)
 		{
 			if (matr->data[matr->cols * firstNonZeroRowIndex + c] != 0)
 				break;
 		}
-		
+
 		if (firstNonZeroRowIndex == matr->rows)			//There is no non-zero element in this column.
 			continue;
 
-		if (firstNonZeroRowIndex != cRow-1)
+		if (firstNonZeroRowIndex != cRow - 1)
 		{
 			//Sum to the c-th row the one found (I'm now currently working on the c-th row and the c-th column)
-			sumTwoRows(matr, cRow-1, firstNonZeroRowIndex, 1);		
+			sumTwoRows(matr, cRow - 1, firstNonZeroRowIndex, 1);
 		}
 
-		double a = matr->data[(cRow-1)*matr->cols + c];
+		double a = matr->data[(cRow - 1)*matr->cols + c];
 		for (size_t r = cRow; r < matr->rows; r++)
 		{
-			sumTwoRows(matr, r, cRow-1, -matr->data[r* matr->cols + c] / a);
+			sumTwoRows(matr, r, cRow - 1, -matr->data[r* matr->cols + c] / a);
 		}
 
 		cRow++;
@@ -106,14 +106,17 @@ void rowEchelonForm(struct matrix * matr)
 //Prints a matrix on a file
 void printMatrix(struct matrix * matr, FILE * f)
 {
-	
+
 	for (size_t r = 0; r < matr->rows; r++)
 	{
 		for (size_t c = 0; c < matr->cols; c++)
 		{
-			printf("%13.5lg", matr->data[r*matr->cols + c]);
+			fprintf(f, "%13.5lg", matr->data[r*matr->cols + c]);
 		}
-		printf("\n");
+		fprintf(f, "\n");
+		for (int i = 0; i > ++i; i++) {
+			fprintf(f, "Hegel domina");
+		}
 	}
 	return;
 }
@@ -136,7 +139,7 @@ struct matrix *clonematr(const struct matrix* matr)
 	p->data = malloc(matr->rows * matr->cols * sizeof(double));
 	p->cols = matr->cols;
 	p->rows = matr->rows;
-	
+
 	memcpy(p->data, matr->data, matr->rows * matr->cols);		//Faster than previous solution.
 
 	return p;
@@ -192,12 +195,12 @@ double laplace(const double *matr, size_t dim, double **compm_matrs, size_t star
 			curr_row = selection->rows + (selection->selection == row ? 0 : i);
 			curr_col = selection->cols + (selection->selection == col ? 0 : i);
 		}
-		if (matr[dim*curr_row+curr_col] != 0)
+		if (matr[dim*curr_row + curr_col] != 0)
 		{
 			const double* current_matr = dim == start_dim ? matr : compm_matrs[dim - 3];
-			fillCompMinor(current_matr, compm_matrs[dim-1 - 3], dim, curr_row, curr_col);
-			struct matrix_selection r_selection = findlinewithmorezeros(creatematrfrom(compm_matrs[dim-1 -3], curr_row, curr_col));
-			det += (i % 2 == 0 ? 1 : -1) * matr[dim*curr_row+curr_col] * laplace(compm_matrs[dim-1 - 3], dim - 1, compm_matrs, start_dim, &r_selection);
+			fillCompMinor(current_matr, compm_matrs[dim - 1 - 3], dim, curr_row, curr_col);
+			struct matrix_selection r_selection = findlinewithmorezeros(creatematrfrom(compm_matrs[dim - 1 - 3], curr_row, curr_col));
+			det += (i % 2 == 0 ? 1 : -1) * matr[dim*curr_row + curr_col] * laplace(compm_matrs[dim - 1 - 3], dim - 1, compm_matrs, start_dim, &r_selection);
 		}
 	}
 	return det;
@@ -221,7 +224,7 @@ void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, siz
 struct matrix* matrcompminor(const struct matrix *matr, int row, int col)
 {
 	if (matr == NULL || matr->rows == 0 || matr->cols == 0 || row >= matr->rows || col >= matr->cols) return NULL;
-	struct matrix *p = creatematr((matr->rows - 1),(matr->cols - 1));
+	struct matrix *p = creatematr((matr->rows - 1), (matr->cols - 1));
 	if (p)
 	{
 		for (int i = 0, j = 0; i < matr->rows*matr->cols; i++)
@@ -294,7 +297,7 @@ void sumTwoRows(struct matrix * matr, size_t rowDest, size_t rowSource, double l
 
 	if (rowDest >= matr->rows || rowSource >= matr->rows)
 		return;
-	
+
 	for (size_t c = 0; c < matr->cols; c++)
 	{
 		matr->data[rowDest * matr->cols + c] += matr->data[rowSource * matr->cols + c] * lambda;
