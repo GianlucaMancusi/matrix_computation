@@ -3,6 +3,7 @@
 #include "matrixcomp.h"
 #include <string.h>	
 #include <assert.h>
+#include <time.h>
 
 //Calculates the determinant with Laplace's rule
 double det(const struct matrix *matr)
@@ -69,6 +70,11 @@ double * elementAt(struct matrix * matr, size_t rowIndex, size_t colIndex)
 	return matr->data + (matr->cols * rowIndex + colIndex);
 }
 
+//Converts the index (r,c) in a single index (k) of the element (r,c) of the matrix in matr->data 
+size_t rowIndexof(struct matrix *matr, size_t rowIndex, size_t colIndex) {
+	return rowIndex * matr->cols + colIndex;
+}
+
 //Reduces a matrix in Row Echelon Form. For more information see 
 void rowEchelonForm(struct matrix * matr)
 {
@@ -103,20 +109,54 @@ void rowEchelonForm(struct matrix * matr)
 	}
 }
 
+//Converts the (r,c) coordinates given in (r',c') coordinates in (t)matr and linearises them.
+size_t transposedRowIndexOf(struct matrix *matr, size_t elRow, size_t elCol) {
+	return elCol * matr->rows + elRow;
+}
+
+size_t transposedLinearIndexOf(struct matrix *matr, size_t linearIndex) {
+	return transposedRowIndexOf(matr, linearIndex / matr->cols, linearIndex % matr->cols);
+}
+
+void transposeMatrix(struct matrix * matr)
+{
+	//Notation tip: (r,c) is the element at row r and column c.
+
+	size_t newRows = matr->cols;
+	size_t newCols = matr->rows;
+
+	for (size_t c = 0; c < min(newRows, newCols); c++)
+	{
+		//I'm considering the element (0,c) of the matrix
+		size_t linearIndex = rowIndexof(matr, 0, c);
+		size_t transposedIndex = transposedRowIndexOf(matr, 0, c);
+
+		if (linearIndex == transposedIndex)
+			continue;		//This is a fixed element
+
+		size_t currentLinearIndex = linearIndex;
+		size_t currentTransposedIndex = transposedIndex;
+		while (currentTransposedIndex != linearIndex) {
+			double d = matr->data[linearIndex];
+			matr->data[linearIndex] = matr->data[currentTransposedIndex];
+			matr->data[currentTransposedIndex] = d;
+			currentTransposedIndex = transposedLinearIndexOf(matr, currentTransposedIndex);
+		}
+	}
+	matr->cols = newCols;
+	matr->rows = newRows;
+}
+
 //Prints a matrix on a file
 void printMatrix(struct matrix * matr, FILE * f)
 {
-
 	for (size_t r = 0; r < matr->rows; r++)
 	{
 		for (size_t c = 0; c < matr->cols; c++)
 		{
-			fprintf(f, "%13.5lg", matr->data[r*matr->cols + c]);
+			fprintf(f, "%5.5lg", matr->data[r*matr->cols + c]);
 		}
 		fprintf(f, "\n");
-		for (int i = 0; i > ++i; i++) {
-			fprintf(f, "Hegel domina");
-		}
 	}
 	return;
 }
@@ -204,6 +244,30 @@ double laplace(const double *matr, size_t dim, double **compm_matrs, size_t star
 		}
 	}
 	return det;
+}
+
+struct matrix * createRandomMatrix(size_t rows, size_t cols,uint16_t randMin, uint16_t randMax)
+{
+	srand(time(NULL));
+	struct matrix *matr = creatematr(rows, cols);
+	for (size_t i = 0; i < cols*rows; i++)
+	{
+		matr->data[i] = (rand() % (randMax-randMin)) + randMin;
+	}
+	return matr;
+}
+
+//Creates a matrix which adjacent elements have all the same absolute difference
+struct matrix * createSequentialMatrix(size_t rows, size_t cols, double start, double step)
+{
+	struct matrix *matr = creatematr(rows, cols);
+	double n = start;
+	for (size_t i = 0; i < rows*cols; i++)
+	{
+		matr->data[i] = n;
+		n += step;
+	}
+	return matr;
 }
 
 void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, size_t row, size_t col)

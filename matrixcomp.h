@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <ctype.h>
 
 struct matrix {
 	size_t rows;
@@ -40,10 +41,15 @@ extern void destroymatr(struct matrix* matr);
 extern double *elementAt(struct matrix *matr, size_t rowIndex, size_t colIndex);//Fast way to access an element of a matrix without thinking too much about it.
 extern void rowEchelonForm(struct matrix *matr);	//Reduce a mtrix in row echelon form. For more information see https://en.wikipedia.org/wiki/Row_echelon_form
 extern void printMatrix(struct matrix *matr, FILE *f);
+extern void transposeMatrix(struct matrix *matr);	//Transpose the input matrix.
+
+extern struct matrix *createRandomMatrix(size_t rows, size_t cols, uint16_t randMin, uint16_t randMax);
+extern struct matrix *createSequentialMatrix(size_t rows, size_t cols, double start, double step);
 //====== Internal functions =======
 extern void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, size_t row, size_t col);
 extern double det3x3(const double *matr);
 extern double laplace(const double *matr, size_t dim, double **compm_matrs, size_t start_dim, const struct matrix_selection *selection);
 extern struct matrix_selection findlinewithmorezeros(const struct matrix *matr);
 extern void sumTwoRows(struct matrix *matr, size_t rowDest, size_t rowSource, double lambda);		//Sums to rowDest rowSource * lambda
+extern size_t transposedRowIndexOf(struct matrix *matr, size_t elRow, size_t elCol);
 #endif //!MATRIXCOMP_H
