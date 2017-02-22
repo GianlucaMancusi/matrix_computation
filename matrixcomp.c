@@ -6,6 +6,7 @@
 #include <time.h>
 #include <stdbool.h>
 
+//To make this foldable in VS...
 #pragma region boolField
 
 struct boolField {
