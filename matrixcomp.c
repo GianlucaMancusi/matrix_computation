@@ -4,6 +4,75 @@
 #include <string.h>	
 #include <assert.h>
 #include <time.h>
+#include <stdbool.h>
+
+#pragma region boolField
+
+struct boolField {
+	uint8_t b0 : 1;
+	uint8_t b1 : 1;
+	uint8_t b2 : 1;
+	uint8_t b3 : 1;
+	uint8_t b4 : 1;
+	uint8_t b5 : 1;
+	uint8_t b6 : 1;
+	uint8_t b7 : 1;
+};
+
+//Returns the value (true if 1 or false if 0) of the bIndex-th bit of the fIndex-th field in the bField array of boolFields
+//Produces an undefined behavior if bIndex is not between 0 and 7 (inclusive)!
+bool getField(struct boolField *bFields, uint8_t bIndex, size_t fIndex) {
+	switch (bIndex)
+	{
+	case 0:
+		return bFields[fIndex].b0 == 1 ? true : false;
+	case 1:
+		return bFields[fIndex].b1 == 1 ? true : false;
+	case 2:
+		return bFields[fIndex].b2 == 1 ? true : false;
+	case 3:
+		return bFields[fIndex].b3 == 1 ? true : false;
+	case 4:
+		return bFields[fIndex].b4 == 1 ? true : false;
+	case 5:
+		return bFields[fIndex].b5 == 1 ? true : false;
+	case 6:
+		return bFields[fIndex].b6 == 1 ? true : false;
+	case 7:
+		return bFields[fIndex].b7 == 1 ? true : false;
+	default:
+		break;
+	}
+}
+
+//Sets the value (true if 1 or false if 0) of the bIndex-th bit of the fIndex-th field in the bField array of boolFields
+//Does not do anything if bIndex is not between 0 and 7 (inclusive)!
+void setField(struct boolField *bFields, uint8_t bIndex, size_t fIndex, bool value) {
+	switch (bIndex)
+	{
+	case 0:
+		bFields[fIndex].b0 = value == true ? 1 : 0; break;
+	case 1:
+		bFields[fIndex].b1 = value == true ? 1 : 0; break;
+	case 2:
+		bFields[fIndex].b2 = value == true ? 1 : 0; break;
+	case 3:
+		bFields[fIndex].b3 = value == true ? 1 : 0; break;
+	case 4:
+		bFields[fIndex].b4 = value == true ? 1 : 0; break;
+	case 5:
+		bFields[fIndex].b5 = value == true ? 1 : 0; break;
+	case 6:
+		bFields[fIndex].b6 = value == true ? 1 : 0; break;
+	case 7:
+		bFields[fIndex].b7 = value == true ? 1 : 0; break;
+	default:
+		break;
+	}
+}
+
+#pragma endregion
+
 
 //Calculates the determinant with Laplace's rule
 double det(const struct matrix *matr)
@@ -109,42 +178,76 @@ void rowEchelonForm(struct matrix * matr)
 	}
 }
 
-//Converts the (r,c) coordinates given in (r',c') coordinates in (t)matr and linearises them.
-size_t transposedRowIndexOf(struct matrix *matr, size_t elRow, size_t elCol) {
-	return elCol * matr->rows + elRow;
+//Returns the linear index of the element of the transposed matrix that will be at (elRow,elCol) in the transposed matrix.
+size_t inverseTransposedRowIndexOf(struct matrix *matr, size_t elRow, size_t elCol) {
+	return elCol * matr->cols + elRow;
 }
 
-size_t transposedLinearIndexOf(struct matrix *matr, size_t linearIndex) {
-	return transposedRowIndexOf(matr, linearIndex / matr->cols, linearIndex % matr->cols);
+size_t inverseTransposedLinearIndexOf(struct matrix *matr, size_t linearIndex) {
+	return inverseTransposedRowIndexOf(matr, linearIndex / matr->rows, linearIndex % matr->rows);
 }
 
 void transposeMatrix(struct matrix * matr)
 {
 	//Notation tip: (r,c) is the element at row r and column c.
-
 	size_t newRows = matr->cols;
 	size_t newCols = matr->rows;
 
-	for (size_t c = 0; c < min(newRows, newCols); c++)
-	{
-		//I'm considering the element (0,c) of the matrix
-		size_t linearIndex = rowIndexof(matr, 0, c);
-		size_t transposedIndex = transposedRowIndexOf(matr, 0, c);
-
-		if (linearIndex == transposedIndex)
-			continue;		//This is a fixed element
-
-		size_t currentLinearIndex = linearIndex;
-		size_t currentTransposedIndex = transposedIndex;
-		while (currentTransposedIndex != linearIndex) {
-			double d = matr->data[linearIndex];
-			matr->data[linearIndex] = matr->data[currentTransposedIndex];
-			matr->data[currentTransposedIndex] = d;
-			currentTransposedIndex = transposedLinearIndexOf(matr, currentTransposedIndex);
+	if (matr->cols == matr->rows) {
+		for (size_t r = 0; r < matr->rows; r++)
+		{
+			for (size_t c = r+1; c < matr->cols; c++)
+			{
+				double temp = matr->data[r*matr->cols + c];
+				matr->data[r*matr->cols + c] = matr->data[c*matr->cols + r];
+				matr->data[c*matr->cols + r] = temp;
+			}
 		}
 	}
-	matr->cols = newCols;
-	matr->rows = newRows;
+	else {
+		//1. Creating table for element tagging
+		size_t elements = matr->cols * matr->rows;
+		size_t tableSize = elements / 8 + (elements % 8 != 0);
+		struct boolField *auxTable = calloc(tableSize, sizeof(struct boolField));
+
+		//2. Begin to transpose the matrix from the first element
+		for (size_t i = 0; i < matr->cols * matr->rows; i++)
+		{
+			if (getField(auxTable, i % 8, i / 8) == true)
+				continue;		//Already truansposed
+
+			size_t linear = i;		//Transpose the matrix starting from i
+
+			size_t transposed = inverseTransposedLinearIndexOf(matr, i);		//What element goes into index i in the transposed matrix?
+
+			if (i == transposed) {
+				setField(auxTable, i % 8, i / 8, true);
+				continue;		//Fixed element
+			}
+
+			double temp = matr->data[i];
+			while (i != transposed) {
+				if (getField(auxTable, linear % 8, linear / 8))
+					continue;		//This element has already been transposed
+
+				//Transpose element linear.
+				matr->data[linear] = matr->data[transposed];		//I'm considering the linear element and I put the element that goes in the linear index of the transposed matrix in its place.
+				setField(auxTable, linear % 8, linear / 8, true);
+
+				//Update linear and transposed
+				linear = transposed;		//Considering now the transposed index (what element goes into the transposed index in the transposed matrix?)
+				transposed = inverseTransposedLinearIndexOf(matr, linear);		//This is the index of the element that will go in the traposed index in the tranposed matrix.
+			}
+			matr->data[linear] = temp;
+			setField(auxTable, linear % 8, linear / 8, true);
+		}
+
+		matr->cols = newCols;
+		matr->rows = newRows;
+		free(auxTable);
+	}
+
+	
 }
 
 //Prints a matrix on a file
@@ -180,7 +283,7 @@ struct matrix *clonematr(const struct matrix* matr)
 	p->cols = matr->cols;
 	p->rows = matr->rows;
 
-	memcpy(p->data, matr->data, matr->rows * matr->cols);		//Faster than previous solution.
+	memcpy(p->data, matr->data, matr->rows * matr->cols);
 
 	return p;
 }
@@ -246,13 +349,13 @@ double laplace(const double *matr, size_t dim, double **compm_matrs, size_t star
 	return det;
 }
 
-struct matrix * createRandomMatrix(size_t rows, size_t cols,uint16_t randMin, uint16_t randMax)
+struct matrix * createRandomMatrix(size_t rows, size_t cols, uint16_t randMin, uint16_t randMax)
 {
 	srand(time(NULL));
 	struct matrix *matr = creatematr(rows, cols);
 	for (size_t i = 0; i < cols*rows; i++)
 	{
-		matr->data[i] = (rand() % (randMax-randMin)) + randMin;
+		matr->data[i] = (rand() % (randMax - randMin)) + randMin;
 	}
 	return matr;
 }

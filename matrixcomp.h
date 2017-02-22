@@ -2,6 +2,7 @@
 // http://www.ingmo.unimore.it/site/en/home.html
 #ifndef MATRIXCOMP_H
 #define MATRIXCOMP_H
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
@@ -14,17 +15,22 @@ struct matrix {
 	double* data;
 };
 
-struct matrix_selection
-{
-	size_t rows;
-	size_t cols;
-	uint8_t selection;
-};
-
 enum linetype
 {
 	row,
 	col
+};
+
+/*
+	rows: chosen row
+	cols: chosen column
+	selection: row or column??
+*/
+struct matrix_selection
+{
+	size_t rows;
+	size_t cols;
+	enum linetype selection;
 };
 
 //====== Useful functions =======
@@ -51,5 +57,4 @@ extern double det3x3(const double *matr);
 extern double laplace(const double *matr, size_t dim, double **compm_matrs, size_t start_dim, const struct matrix_selection *selection);
 extern struct matrix_selection findlinewithmorezeros(const struct matrix *matr);
 extern void sumTwoRows(struct matrix *matr, size_t rowDest, size_t rowSource, double lambda);		//Sums to rowDest rowSource * lambda
-extern size_t transposedRowIndexOf(struct matrix *matr, size_t elRow, size_t elCol);
 #endif //!MATRIXCOMP_H
