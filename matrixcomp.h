@@ -2,10 +2,12 @@
 // http://www.ingmo.unimore.it/site/en/home.html
 #ifndef MATRIXCOMP_H
 #define MATRIXCOMP_H
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <ctype.h>
 
 struct matrix {
 	size_t rows;
@@ -13,17 +15,22 @@ struct matrix {
 	double* data;
 };
 
-struct matrix_selection
-{
-	size_t rows;
-	size_t cols;
-	uint8_t selection;
-};
-
 enum linetype
 {
 	row,
 	col
+};
+
+/*
+	rows: chosen row
+	cols: chosen column
+	selection: row or column??
+*/
+struct matrix_selection
+{
+	size_t rows;
+	size_t cols;
+	enum linetype selection;
 };
 
 //====== Useful functions =======
@@ -40,6 +47,10 @@ extern void destroymatr(struct matrix* matr);
 extern double *elementAt(struct matrix *matr, size_t rowIndex, size_t colIndex);//Fast way to access an element of a matrix without thinking too much about it.
 extern void rowEchelonForm(struct matrix *matr);	//Reduce a mtrix in row echelon form. For more information see https://en.wikipedia.org/wiki/Row_echelon_form
 extern void printMatrix(struct matrix *matr, FILE *f);
+extern void transposeMatrix(struct matrix *matr);	//Transpose the input matrix.
+
+extern struct matrix *createRandomMatrix(size_t rows, size_t cols, uint16_t randMin, uint16_t randMax);
+extern struct matrix *createSequentialMatrix(size_t rows, size_t cols, double start, double step);
 //====== Internal functions =======
 extern void fillCompMinor(const double *src_matr, double *dst_matr, size_t src_dim, size_t row, size_t col);
 extern double det3x3(const double *matr);
