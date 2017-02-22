@@ -175,6 +175,8 @@ int main(void)
 		matrrow(matr10, 5, row5);
 	}
 
+	double ddssdsd = det(matr10);
+
 	rowEchelonForm(matr10);
 
 
@@ -190,7 +192,7 @@ int main(void)
 
 
 	destroymatr(matr10);
-
+	
 
 	struct matrix *matr11 = createSequentialMatrix(4, 6, 0., 1.);
 
