@@ -192,7 +192,7 @@ int main(void)
 	destroymatr(matr10);
 
 
-	struct matrix *matr11 = createSequentialMatrix(6, 4, 0., 1.);
+	struct matrix *matr11 = createSequentialMatrix(4, 6, 0., 1.);
 
 	printf("Transpose Test: \nOriginal Matrix:\n");
 	printMatrix(matr11, stdout);
@@ -201,6 +201,10 @@ int main(void)
 
 
 	printf("\nTransposed Matrix:\n");
+	printMatrix(matr11, stdout);
+
+	printf("\nReverse Transpose:\n");
+	transposeMatrix(matr11);
 	printMatrix(matr11, stdout);
 
 	return 0;
