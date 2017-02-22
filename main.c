@@ -177,7 +177,8 @@ int main(void)
 
 	rowEchelonForm(matr10);
 
-	printMatrix(matr10, stdout);
+
+	//printMatrix(matr10, stdout);
 
 	double d = 1;
 	for (size_t i = 0; i < matr10->cols; i++)
@@ -187,7 +188,24 @@ int main(void)
 
 	assert(d == -290);		//Determinant of matr10 is -290.
 
+
 	destroymatr(matr10);
+
+
+	struct matrix *matr11 = createSequentialMatrix(4, 6, 0., 1.);
+
+	printf("Transpose Test: \nOriginal Matrix:\n");
+	printMatrix(matr11, stdout);
+
+	transposeMatrix(matr11);
+
+
+	printf("\nTransposed Matrix:\n");
+	printMatrix(matr11, stdout);
+
+	printf("\nReverse Transpose:\n");
+	transposeMatrix(matr11);
+	printMatrix(matr11, stdout);
 
 	return 0;
 }
