@@ -185,7 +185,7 @@ size_t inverseTransposedRowIndexOf(struct matrix *matr, size_t elRow, size_t elC
 }
 
 size_t inverseTransposedLinearIndexOf(struct matrix *matr, size_t linearIndex) {
-	return inverseTransposedRowIndexOf(matr, linearIndex / matr->rows, linearIndex % matr->rows);
+	return inverseTransposedRowIndexOf(matr, linearIndex / matr->cols, linearIndex % matr->cols);
 }
 
 void transposeMatrix(struct matrix * matr)
